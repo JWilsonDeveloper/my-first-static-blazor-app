@@ -92,5 +92,24 @@ namespace Api
 
 			return response;
 		}
-	}
+
+        [Function("Flashcard")]
+        public HttpResponseData Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+        {
+            // Path to the JSON file
+            var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "flashcardData.json");
+
+            // Read the JSON file content
+            var jsonData = File.ReadAllText(jsonFilePath);
+
+            // Deserialize the JSON content to an array of WeatherForecast objects
+            var flashcards = JsonSerializer.Deserialize<Flashcard[]>(jsonData);
+
+            // Create the HTTP response and write the serialized JSON content
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            response.WriteAsJsonAsync(flashcards);
+
+            return response;
+        }
+    }
 }
