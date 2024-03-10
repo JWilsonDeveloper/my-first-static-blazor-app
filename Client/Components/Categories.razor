@@ -1,11 +1,11 @@
 ﻿@using BlazorApp.Shared
 @inject HttpClient Http
 
-<h3>Categories</h3>
+<h3>Select Categories</h3>
 
 @if(categories == null || categories.Count < 2)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Loading categories...</em></p>
 }
 else
 {

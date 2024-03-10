@@ -4,17 +4,19 @@
 
 @if (flashcards == null || flashcards.Length == 0)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Loading flashcards...</em></p>
 }
 else
 {
-    <h3>Flashcard: @(i + 1) / @flashcards.Length</h3>
-    <h3>Questions: @active.Question</h3>
+    <h5>Flashcard: @(i + 1) / @flashcards.Length</h5>
+    <h5>Category: @active.Category</h5>
+    <h5>Questions: @active.Question</h5>
     @if (show)
     {
-        <h3>Answer: @active.Answer</h3>
+        <h5>Answer: @active.Answer</h5>
     }
     <button @onclick="ToggleAnswer">Show/Hide Answer</button>
+    <br />
     <button @onclick="NextCard">Next Flashcard</button>
 }
 

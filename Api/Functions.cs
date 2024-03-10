@@ -1,19 +1,23 @@
-/*using System.Net;
-using BlazorApp.Shared;
+using System.IO;
+using System.Net;
+using System.Text.Json;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using BlazorApp.Shared;
+using System.Runtime.InteropServices;
+using System.Web;
 
 namespace Api
 {
-    public class HttpTrigger
-    {
-        private readonly ILogger _logger;
+	public class HttpTrigger
+	{
+		private readonly ILogger _logger;
 
-        public HttpTrigger(ILoggerFactory loggerFactory)
-        {
-            _logger = loggerFactory.CreateLogger<HttpTrigger>();
-        }
+		public HttpTrigger(ILoggerFactory loggerFactory)
+		{
+			_logger = loggerFactory.CreateLogger<HttpTrigger>();
+		}
 
         [Function("WeatherForecast")]
         public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
@@ -53,47 +57,6 @@ namespace Api
 
             return summary;
         }
-    }
-}*/
-using System.IO;
-using System.Net;
-using System.Text.Json;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
-using BlazorApp.Shared;
-using System.Runtime.InteropServices;
-using System.Web;
-
-namespace Api
-{
-	public class HttpTrigger
-	{
-		private readonly ILogger _logger;
-
-		public HttpTrigger(ILoggerFactory loggerFactory)
-		{
-			_logger = loggerFactory.CreateLogger<HttpTrigger>();
-		}
-
-		[Function("WeatherForecast")]
-		public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
-		{
-			// Path to the JSON file
-			var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "data.json");
-
-			// Read the JSON file content
-			var jsonData = File.ReadAllText(jsonFilePath);
-
-			// Deserialize the JSON content to an array of WeatherForecast objects
-			var forecasts = JsonSerializer.Deserialize<WeatherForecast[]>(jsonData);
-
-			// Create the HTTP response and write the serialized JSON content
-			var response = req.CreateResponse(HttpStatusCode.OK);
-			response.WriteAsJsonAsync(forecasts);
-
-			return response;
-		}
 
         [Function("Flashcard")]
         public HttpResponseData Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
@@ -118,7 +81,7 @@ namespace Api
         public HttpResponseData RunCategories([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
             // Path to the JSON file
-            var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "flashcardData.json");
+            var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "AllFlashcardData.json");
 
             // Read the JSON file content
             var jsonData = File.ReadAllText(jsonFilePath);
@@ -140,7 +103,7 @@ namespace Api
         public HttpResponseData FlashcardsByCategories([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
             // Path to the JSON file
-            var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "flashcardData.json");
+            var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "AllFlashcardData.json");
 
             // Read the JSON file content
             var jsonData = File.ReadAllText(jsonFilePath);

@@ -14,10 +14,10 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="data.json">
+    <None Update="AllFlashcardData.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="flashcardData.json">
+    <None Update="data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="host.json">
