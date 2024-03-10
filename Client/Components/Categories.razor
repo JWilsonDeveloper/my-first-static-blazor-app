@@ -3,9 +3,15 @@
 
 <h3>Categories</h3>
 
-<RecursiveCategoryNode CurrentNode=@root Depth="1" Root=@root OnChildAction="HandleChildAction" />
-<button @onclick="ConfirmSelection">Confirm Selection</button>
-
+@if(categories == null || categories.Count < 2)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RecursiveCategoryNode CurrentNode=@root Depth="1" Root=@root OnChildAction="HandleChildAction" />
+    <button @onclick="ConfirmSelection">Confirm Selection</button>
+}
 
 @code {
 
@@ -95,7 +101,6 @@
                 selectedCategories.AddRange(GetSelectedCategories(child));
             }
         }
-
         return selectedCategories;
     }
 }

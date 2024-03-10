@@ -2,7 +2,7 @@
 @using BlazorApp.Client.Components
 @inject HttpClient Http
 
-@if (flashcards == null)
+@if (flashcards == null || flashcards.Length == 0)
 {
     <p><em>Loading...</em></p>
 }
