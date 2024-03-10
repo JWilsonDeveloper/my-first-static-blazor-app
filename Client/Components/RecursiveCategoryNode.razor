@@ -1,0 +1,111 @@
+﻿@using BlazorApp.Shared
+
+<input style="margin-left:@(Depth * 20)px" type="checkbox" id="@fullName" name="@fullName" checked="@CurrentNode.IsChecked" @onchange="HandleCheckboxChange">
+<label for="@fullName">@CurrentNode.Name</label>
+
+<br>
+@if (CurrentNode.Children != null)
+{
+    @foreach (CategoryNode child in CurrentNode.Children)
+    {
+        <RecursiveCategoryNode CurrentNode=@child Depth=@(Depth + 1) Root=@Root OnChildAction="HandleChildAction" />
+    }
+}
+
+@code {
+    [Parameter]
+    public CategoryNode CurrentNode { get; set; }
+
+    [Parameter]
+    public int Depth { get; set; }
+
+    [Parameter]
+    public CategoryNode Root { get; set; }
+
+    [Parameter] public EventCallback OnChildAction { get; set; }
+
+    private async Task PerformAction()
+    {
+        await OnChildAction.InvokeAsync();
+    }
+
+    private async Task HandleChildAction()
+    {
+        PerformAction();
+    }
+
+    public string fullName;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    private void HandleCheckboxChange(ChangeEventArgs e)
+    {
+        // Update the IsChecked property for the current node
+        CurrentNode.IsChecked = (bool)e.Value;
+
+        if (!CurrentNode.IsChecked)
+        {
+            // Unselect any selected nodes of which the current node is a direct descendant
+            PropagateSelectionUp(Root);
+        }
+
+        // Propagate the selection state to child nodes and their descendants
+        PropagateSelectionDown(CurrentNode, CurrentNode.IsChecked);
+    }
+
+    private void PropagateSelectionDown(CategoryNode node, bool isChecked)
+    {
+        if (node.Children != null)
+        {
+            // Do not propogate unselect if some child nodes are already unselected
+            if (isChecked || node.Children.All(child => child.IsChecked))
+            {
+                foreach (CategoryNode child in node.Children)
+                {
+                    child.IsChecked = isChecked;
+                    PropagateSelectionDown(child, isChecked); // Recurse for descendants
+                }
+            }
+        }
+    }
+
+    private void PropagateSelectionUp(CategoryNode node)
+    {
+        // Check if any descendant nodes are not checked
+        bool anyDescendantUnchecked = HasUncheckedDescendants(node);
+
+        // If any descendant is unchecked, set this node's IsChecked to false
+        if (anyDescendantUnchecked)
+        {
+            node.IsChecked = false;
+            PerformAction(); // Trigger UI update
+        }
+
+        // Recurse for each child node
+        if (node.Children != null)
+        {
+            foreach (CategoryNode child in node.Children)
+            {
+                PropagateSelectionUp(child);
+            }
+        }
+    }
+
+    private bool HasUncheckedDescendants(CategoryNode node)
+    {
+        if (node.Children != null)
+        {
+            foreach (CategoryNode child in node.Children)
+            {
+                if (!child.IsChecked || HasUncheckedDescendants(child))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}

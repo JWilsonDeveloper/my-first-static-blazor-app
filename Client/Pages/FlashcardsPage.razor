@@ -1,0 +1,32 @@
+﻿@page "/flashcards"
+@using BlazorApp.Shared 
+@using BlazorApp.Client.Components
+@inject HttpClient Http
+
+<PageTitle>Flashcards</PageTitle>
+
+<h1>Flashcards</h1>
+@if (!@selectionConfirmed)
+{
+    <Categories OnCategoriesSelected="OnCategoriesSelected" />
+}
+else
+{
+    <Flashcards Categories=categories/> 
+    foreach(string s in categories)
+    {
+        <h4>@s</h4>
+    }
+}
+
+@code {
+    private bool selectionConfirmed = false;
+    private List<string> categories;
+
+    private void OnCategoriesSelected(List<string> selectedCategories)
+    {
+        // Child component returns selected categories
+        categories = selectedCategories;
+        selectionConfirmed = true;
+    }
+}

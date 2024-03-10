@@ -1,0 +1,80 @@
+﻿@using BlazorApp.Shared
+@using BlazorApp.Client.Components
+@inject HttpClient Http
+
+@if (flashcards == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>Flashcard: @(i + 1) / @flashcards.Length</h3>
+    <h3>Questions: @active.Question</h3>
+    @if (show)
+    {
+        <h3>Answer: @active.Answer</h3>
+    }
+    <button @onclick="ToggleAnswer">Show/Hide Answer</button>
+    <button @onclick="NextCard">Next Flashcard</button>
+}
+
+@code {
+    [Parameter]
+    public List<string> Categories { get; set; }
+
+    private Flashcard[] flashcards = new Flashcard[] { };
+    private bool show = false;
+    private int i = 0;
+    private Flashcard active;
+
+    void NextCard()
+    {
+        show = false;
+        if (i < flashcards.Length - 1)
+        {
+            i++;
+            active = flashcards[i];
+        }
+        else
+        {
+            i = 0;
+            active = flashcards[i];
+        }
+    }
+
+    void ToggleAnswer()
+    {
+        show = !show;
+    }
+
+    public string FormatQuery(List<string> inputStrings)
+    {
+        if (inputStrings == null || inputStrings.Count == 0)
+        {
+            return string.Empty; // Return an empty string if the input list is empty
+        }
+
+        // string.Join to concatenate the categories with percent signs between each
+        string concatenatedString = string.Join("%", inputStrings);
+
+        return concatenatedString;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            string queryString = FormatQuery(Categories);
+            string fullUrl = $"/api/FlashcardsByCategories?categories={queryString}";
+            flashcards = await Http.GetFromJsonAsync<Flashcard[]>(fullUrl) ?? new Flashcard[] { };
+            Random random = new Random();
+            random.Shuffle(flashcards);
+            active = flashcards[0];
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+    }
+
+}
