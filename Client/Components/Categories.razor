@@ -10,6 +10,10 @@
 else
 {
     <RecursiveCategoryNode CurrentNode=@root Depth="1" Root=@root OnChildAction="HandleChildAction" />
+    @if (noCategoriesSelected)
+    {
+        <p style="color: red">Please select a category</p>
+    }
     <button @onclick="ConfirmSelection">Confirm Selection</button>
 }
 
@@ -18,6 +22,7 @@ else
     private List<List<string>> nestedLists = new List<List<string>>();
     List<string> categories = new List<string>();
     CategoryNode root = new CategoryNode { Name = "All Categories", IsChecked = false };
+    private bool noCategoriesSelected;
 
     [Parameter]
     public EventCallback<List<string>> OnCategoriesSelected { get; set; }
@@ -25,8 +30,15 @@ else
     private async Task ConfirmSelection()
     {
         List<string> selectedCategories = GetSelectedCategories(root);
-        // Invoke the event callback with the selected categories
-        await OnCategoriesSelected.InvokeAsync(selectedCategories);
+        if (selectedCategories.Count == 0)
+        {
+            noCategoriesSelected = true;
+        }
+        else
+        {
+            // Invoke the event callback with the selected categories
+            await OnCategoriesSelected.InvokeAsync(selectedCategories);
+        }
     }
 
     private async Task HandleChildAction()

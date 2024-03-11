@@ -19,64 +19,6 @@ namespace Api
 			_logger = loggerFactory.CreateLogger<HttpTrigger>();
 		}
 
-        [Function("WeatherForecast")]
-        public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
-        {
-            var randomNumber = new Random();
-            var temp = 0;
-
-            var result = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = temp = randomNumber.Next(-20, 55),
-                Summary = GetSummary(temp)
-            }).ToArray();
-
-            var response = req.CreateResponse(HttpStatusCode.OK);
-            response.WriteAsJsonAsync(result);
-
-            return response;
-        }
-
-        private string GetSummary(int temp)
-        {
-            var summary = "Mild";
-
-            if (temp >= 32)
-            {
-                summary = "Hot";
-            }
-            else if (temp <= 16 && temp > 0)
-            {
-                summary = "Cold";
-            }
-            else if (temp <= 0)
-            {
-                summary = "Freezing";
-            }
-
-            return summary;
-        }
-
-        [Function("GetAllFlashcards")]
-        public HttpResponseData GetAllFlashcards([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
-        {
-            // Path to the JSON file
-            var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "AllFlashcardData.json");
-
-            // Read the JSON file content
-            var jsonData = File.ReadAllText(jsonFilePath);
-
-            // Deserialize the JSON content to an array of Flashcard objects
-            var flashcards = JsonSerializer.Deserialize<Flashcard[]>(jsonData);
-
-            // Create the HTTP response and write the serialized JSON content
-            var response = req.CreateResponse(HttpStatusCode.OK);
-            response.WriteAsJsonAsync(flashcards);
-
-            return response;
-        }
-
         [Function("FlashcardCategories")]
         public HttpResponseData FlashcardCategories([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
@@ -111,7 +53,7 @@ namespace Api
             // Deserialize the JSON data into a list of objects
             var flashcards = JsonSerializer.Deserialize<List<Flashcard>>(jsonData);
 
-            // Get the query parameter from the request (assuming it's named "categories")
+            // Get the query parameter from the request
             var query = req.Url.Query; // Example: "?categories=Category1%Category2%Category3"
             Console.WriteLine("query: " + query);
             var queryParameters = HttpUtility.ParseQueryString(query);
