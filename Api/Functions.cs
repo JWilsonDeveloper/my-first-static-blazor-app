@@ -58,11 +58,11 @@ namespace Api
             return summary;
         }
 
-        [Function("Flashcard")]
-        public HttpResponseData Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+        [Function("GetAllFlashcards")]
+        public HttpResponseData GetAllFlashcards([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
             // Path to the JSON file
-            var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "flashcardData.json");
+            var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "AllFlashcardData.json");
 
             // Read the JSON file content
             var jsonData = File.ReadAllText(jsonFilePath);
@@ -78,7 +78,7 @@ namespace Api
         }
 
         [Function("FlashcardCategories")]
-        public HttpResponseData RunCategories([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+        public HttpResponseData FlashcardCategories([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
             // Path to the JSON file
             var jsonFilePath = Path.Combine(Environment.CurrentDirectory, "AllFlashcardData.json");

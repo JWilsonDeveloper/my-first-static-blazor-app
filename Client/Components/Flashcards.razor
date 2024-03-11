@@ -17,31 +17,34 @@ else
     }
     <button @onclick="ToggleAnswer">Show/Hide Answer</button>
     <br />
-    <button @onclick="NextCard">Next Flashcard</button>
+    <button @onclick="PrevCard">Previous</button>
+    <button @onclick="NextCard">Next</button>
 }
 
 @code {
     [Parameter]
     public List<string> Categories { get; set; }
 
+    [Parameter]
+    public bool ShouldShuffle { get; set; }
+
     private Flashcard[] flashcards = new Flashcard[] { };
     private bool show = false;
     private int i = 0;
     private Flashcard active;
 
+    void PrevCard()
+    {
+        show = false;
+        i = i > 0 ? i - 1 : flashcards.Length - 1;
+        active = flashcards[i];
+    }
+
     void NextCard()
     {
         show = false;
-        if (i < flashcards.Length - 1)
-        {
-            i++;
-            active = flashcards[i];
-        }
-        else
-        {
-            i = 0;
-            active = flashcards[i];
-        }
+        i = i < flashcards.Length - 1 ? i + 1 : 0;
+        active = flashcards[i];
     }
 
     void ToggleAnswer()
@@ -49,7 +52,7 @@ else
         show = !show;
     }
 
-    public string FormatQuery(List<string> inputStrings)
+    private string FormatQuery(List<string> inputStrings)
     {
         if (inputStrings == null || inputStrings.Count == 0)
         {
@@ -66,11 +69,17 @@ else
     {
         try
         {
+            // Format the query to server and get the flashcards
             string queryString = FormatQuery(Categories);
             string fullUrl = $"/api/FlashcardsByCategories?categories={queryString}";
             flashcards = await Http.GetFromJsonAsync<Flashcard[]>(fullUrl) ?? new Flashcard[] { };
-            Random random = new Random();
-            random.Shuffle(flashcards);
+
+            if (ShouldShuffle)
+            {
+                Random random = new Random();
+                random.Shuffle(flashcards);
+            }
+
             active = flashcards[0];
         }
         catch (Exception ex)

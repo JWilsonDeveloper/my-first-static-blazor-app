@@ -8,21 +8,42 @@
 <h1>Flashcards</h1>
 @if (!@selectionConfirmed)
 {
+    <h4>Shuffle the cards?</h4>
+    <input id="ShuffleCheckbox" type="checkbox" onchange="@HandleShuffleChange">
+    <label for="ShuffleCheckbox">Shuffle cards</label>
+
     <Categories OnCategoriesSelected="OnCategoriesSelected" />
 }
+
 else
 {
-    <Flashcards Categories=categories/>
+    <Flashcards Categories=categories ShouldShuffle=shouldShuffle />
+
+    <button @onclick="ReinitializePage">Return to Categories</button>
 }
 
 @code {
     private bool selectionConfirmed = false;
     private List<string> categories;
+    private bool shouldShuffle = false;
 
     private void OnCategoriesSelected(List<string> selectedCategories)
     {
         // Child component returns selected categories
         categories = selectedCategories;
         selectionConfirmed = true;
+    }
+
+    private void HandleShuffleChange(ChangeEventArgs e)
+    {
+        shouldShuffle = e.Value.ToString() == "False" ? false : true;
+    }
+
+    private void ReinitializePage()
+    {
+        // Reset any relevant properties or state
+        selectionConfirmed = false;
+        categories = null;
+        shouldShuffle = false;
     }
 }
