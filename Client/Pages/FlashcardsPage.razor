@@ -8,36 +8,45 @@
 <h1>Flashcards</h1>
 @if (!@selectionConfirmed)
 {
-    <h4>Shuffle the cards?</h4>
-    <input id="ShuffleCheckbox" type="checkbox" onchange="@HandleShuffleChange">
-    <label for="ShuffleCheckbox">Shuffle cards</label>
-
-    <Categories OnCategoriesSelected="OnCategoriesSelected" />
+    <div style="display: flex">
+        <!-- Left column -->
+        <div style="flex: 1; background-color:#aaa; text-align: center;" >
+            <div style="position: relative; top: 50%;">
+                <input id="ShuffleCheckbox" type="checkbox" @onchange='(e) => shouldShuffle = (e.Value.ToString() == "False") ? false : true'>
+                <label for="ShuffleCheckbox">Shuffle cards</label>
+                <div>
+                    <button @onclick="TriggerFunctionInCategories">Confirm Selection</button>
+                </div>
+                @if (noCategoriesSelected)
+                {
+                    <p style="color: red">Please select a category</p>
+                }
+            </div>
+        </div>
+        <!-- Right column (Categories component) -->
+        <div style="flex: 2; background-color:#bbb;">
+            <Categories @ref="categoriesRef" />
+        </div>
+    </div>
 }
-
 else
 {
-    <Flashcards Categories=categories ShouldShuffle=shouldShuffle />
-
-    <button @onclick="ReinitializePage">Return to Categories</button>
+    //<div style="display: flex; flex-direction: column;">
+    <div style="background-color:#aaa;">
+        <button class="x-button" @onclick="ReinitializePage">&lt Categories</button>
+    </div>
+    <div style="background-color:#bbb; padding: 5px 10px">
+        <Flashcards Categories=categories ShouldShuffle=shouldShuffle />
+    </div>
+    
 }
 
 @code {
+    private Categories categoriesRef;
     private bool selectionConfirmed = false;
     private List<string> categories;
     private bool shouldShuffle = false;
-
-    private void OnCategoriesSelected(List<string> selectedCategories)
-    {
-        // Child component returns selected categories
-        categories = selectedCategories;
-        selectionConfirmed = true;
-    }
-
-    private void HandleShuffleChange(ChangeEventArgs e)
-    {
-        shouldShuffle = e.Value.ToString() == "False" ? false : true;
-    }
+    private bool noCategoriesSelected;
 
     private void ReinitializePage()
     {
@@ -45,5 +54,36 @@ else
         selectionConfirmed = false;
         categories = null;
         shouldShuffle = false;
+    }
+
+    private void HandleConfirmButton(List<string> selectedCategories)
+    {
+        if (selectedCategories.Count == 0)
+        {
+            noCategoriesSelected = true;
+        }
+        else
+        {
+            // Child component returns selected categories
+            categories = selectedCategories;
+            selectionConfirmed = true;
+        }
+    }
+
+    // This method will trigger the child component's function
+    private void TriggerFunctionInCategories()
+    {
+        if (categoriesRef != null)
+        {
+            categories = categoriesRef.CategoriesFunction();
+            if(categories != null && categories.Count > 0)
+            {
+                selectionConfirmed = true;
+            }
+            else
+            {
+                noCategoriesSelected = true;
+            }
+        }
     }
 }

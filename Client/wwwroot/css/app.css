@@ -101,3 +101,13 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+
+.x-button {
+    background-color: transparent;
+    color: black; /* Customize the button text color */
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+}

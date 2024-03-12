@@ -31,7 +31,7 @@
 
     private async Task HandleChildAction()
     {
-        PerformAction();
+        await PerformAction();
     }
 
     public string fullName;
@@ -41,7 +41,7 @@
         base.OnInitialized();
     }
 
-    private void HandleCheckboxChange(ChangeEventArgs e)
+    private async Task HandleCheckboxChange(ChangeEventArgs e)
     {
         // Update the IsChecked property for the current node
         CurrentNode.IsChecked = (bool)e.Value;
@@ -49,7 +49,7 @@
         if (!CurrentNode.IsChecked)
         {
             // Unselect any selected nodes of which the current node is a direct descendant
-            PropagateSelectionUp(Root);
+            await PropagateSelectionUp(Root);
         }
 
         // Propagate the selection state to child nodes and their descendants
@@ -72,7 +72,7 @@
         }
     }
 
-    private void PropagateSelectionUp(CategoryNode node)
+    private async Task PropagateSelectionUp(CategoryNode node)
     {
         // Check if any descendant nodes are not checked
         bool anyDescendantUnchecked = HasUncheckedDescendants(node);
@@ -81,7 +81,7 @@
         if (anyDescendantUnchecked)
         {
             node.IsChecked = false;
-            PerformAction(); // Trigger UI update
+            await PerformAction(); // Trigger UI update
         }
 
         // Recurse for each child node
@@ -89,7 +89,7 @@
         {
             foreach (CategoryNode child in node.Children)
             {
-                PropagateSelectionUp(child);
+                await PropagateSelectionUp(child);
             }
         }
     }

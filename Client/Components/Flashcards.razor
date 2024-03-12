@@ -8,17 +8,20 @@
 }
 else
 {
-    <h5>Flashcard: @(i + 1) / @flashcards.Length</h5>
-    <h5>Category: @active.Category</h5>
+    <h6>Flashcard: @(i + 1) / @flashcards.Length</h6>
+    <h6>Category: @active.Category</h6>
     <h5>Questions: @active.Question</h5>
     @if (show)
     {
         <h5>Answer: @active.Answer</h5>
     }
+    else
+    {
+        <h5>Answer: </h5>
+    }
+    <button @onclick="PrevCard">&lt</button>
     <button @onclick="ToggleAnswer">Show/Hide Answer</button>
-    <br />
-    <button @onclick="PrevCard">Previous</button>
-    <button @onclick="NextCard">Next</button>
+    <button @onclick="NextCard">&gt</button>
 }
 
 @code {
